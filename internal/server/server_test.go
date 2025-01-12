@@ -32,12 +32,13 @@ func TestServer(t *testing.T) {
 
 func setupTest(t *testing.T, fn func(*Config)) (client api.LogClient, cfg *Config, teardown func()) {
 	t.Helper()
-
 	l, err := net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(t, err)
 
 	clientTLSConfig, err := config.SetupTLSConfig(config.TLSConfig{
-		CAFile: config.CAFile,
+		KeyFile:  config.ClientKeyFile,
+		CertFile: config.ClientCertFile,
+		CAFile:   config.CAFile,
 	})
 	require.NoError(t, err)
 
@@ -50,6 +51,7 @@ func setupTest(t *testing.T, fn func(*Config)) (client api.LogClient, cfg *Confi
 		KeyFile:       config.ServerKeyFile,
 		CAFile:        config.CAFile,
 		ServerAddress: l.Addr().String(),
+		Server:        true,
 	})
 	require.NoError(t, err)
 
